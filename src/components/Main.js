@@ -7,7 +7,8 @@ class AppComponent extends React.Component {
     super()
     this.path = '../images/';
     this.state = {
-      dataList: []
+      dataList: [],
+      activeIndex: 0
     }
   }
 
@@ -29,8 +30,10 @@ class AppComponent extends React.Component {
     if (!data) return null
     let tempArr = []
     let imgFigureClassName = 'img-figure';
+    let styleObj = {
+    }
     data.map((item, key) => {
-      tempArr.push(<figure className={imgFigureClassName} key={key}>
+      tempArr.push(<figure className={imgFigureClassName} key={key} style={styleObj}>
         <img src={item.imageUrl}
              alt={item.title}
         />
