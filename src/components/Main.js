@@ -1,16 +1,61 @@
-require('normalize.css/normalize.css');
-require('styles/App.css');
-
 import React from 'react';
-
-let yeomanImage = require('../images/yeoman.png');
+import imageDatas from '../data/imageDatas.js';
+import '../styles/App.css'
 
 class AppComponent extends React.Component {
+  constructor() {
+    super()
+    this.path = '../images/';
+    this.state = {
+      dataList: []
+    }
+  }
+
+  componentWillMount() {
+    this.resetItemList(this.path, imageDatas)
+  }
+
+  resetItemList(path, data) {
+    if (!data) return
+    data.map(item => {
+      item.imageUrl = path + item.fileName
+    })
+     this.setState({
+       dataList: data
+     })
+  }
+
+  getImgFigure(data) {
+    if (!data) return null
+    let tempArr = []
+    let imgFigureClassName = 'img-figure';
+    data.map((item, key) => {
+      tempArr.push(<figure className={imgFigureClassName} key={key}>
+        <img src={item.imageUrl}
+             alt={item.title}
+        />
+        <figcaption>
+          <h2 className="img-title">{item.title}</h2>
+          <div className="img-back">
+            <p>{item.desc}</p>
+          </div>
+        </figcaption>
+      </figure>)
+    })
+
+    return tempArr
+  }
+
   render() {
+    const { dataList } = this.state
+    const imgFigure = this.getImgFigure(dataList)
     return (
-      <div className="index">
-        <img src={yeomanImage} alt="Yeoman Generator" />
-        <div className="notice">Please edit <code>src/components/Main.js</code> to get started!</div>
+      <div className="content">
+        <section className="stage">
+          <section className="img-sec">
+            {imgFigure}
+          </section>
+        </section>
       </div>
     );
   }
