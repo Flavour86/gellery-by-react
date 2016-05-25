@@ -1,11 +1,13 @@
 import React, { Component, PropTypes } from 'react'
+import ReactDOM from 'react-dom'
 
 class ImgFigure extends Component {
   constructor() {
     super()
     this.state = {
       imgFigureClassName: 'img-figure',
-      dataList: []
+      dataList: [],
+      isBack: false
     }
     this.PropTypes = {
       dataList:PropTypes.array.isRequired,
@@ -16,19 +18,7 @@ class ImgFigure extends Component {
   }
 
   componentWillMount() {
-    const { dataList, activeIndex } = this.props
-    dataList.map((item, key) => {
-      const rotate = this.getRangeRotate()
-      if (key === activeIndex) {
-        item.style = {
-          transform: 'rotate(0)'
-        }
-      } else {
-        item.style = {
-          transform: `rotate(${rotate}deg)`
-        }
-      }
-    })
+    const { dataList } = this.props
     this.setState({
       dataList: dataList
     })
@@ -74,16 +64,20 @@ class ImgFigure extends Component {
         max: stageH/2 - imgHeight
       }
     }
-    let centerPos = data.splice(active, 1);
-    let topPos = this.getRangeArrNum(data,1);
+    console.log(active)
+    let centerPos = this.getCenterPos(data, active);
+    let topPos = this.getRangeArrNum(data,2);
     let leftPos = this.getRangeArrNum(data, Math.ceil(data.length / 2));
     let rightPos = data;
     this.getItemPosi(topPos, centerInterval)
     this.getItemPosi(leftPos, leftInterval)
     this.getItemPosi(rightPos, rightInterval)
     if (centerPos.length !==0) {
-      centerPos[0].style.left = stageW/2 - imgWidth/2 + 'px'
-      centerPos[0].style.top = stageH/2 + 'px'
+      centerPos[0].style = {
+        left: stageW/2 - imgWidth/2 + 'px',
+        top: stageH/2 + 'px',
+        zIndex: '10'
+      }
     }
     const newData = [...centerPos,...topPos,...leftPos,...rightPos]
     this.setState({
@@ -91,15 +85,32 @@ class ImgFigure extends Component {
     })
   }
 
+  getCenterPos(data, current) {
+    if (!data) return
+    const temp = []
+    for(let i = 0;i<data.length;i++){
+      if (data[i].id === current) {
+        temp.push(data[i])
+        data.splice(i,1)
+      }
+    }
+    return temp
+  }
+
   getRangeRotate() {
-    return (Math.random() > 0.5 ? '-' : '') + Math.ceil(Math.random()*45)
+    return (Math.random() > 0.5 ? '-' : '') + Math.ceil(Math.random()*30)
   }
 
   getItemPosi(data, pos) {
     if (!data.length || !pos) return;
     data.map(item => {
-      item.style.left = this.getRangeNum(pos.x.min, pos.x.max) + 'px'
-      item.style.top = this.getRangeNum(pos.y.min, pos.y.max) + 'px'
+      const rotate = this.getRangeRotate()
+      item.style = {
+        left: this.getRangeNum(pos.x.min, pos.x.max) + 'px',
+        top: this.getRangeNum(pos.y.min, pos.y.max) + 'px',
+        transform: `rotate(${rotate}deg)`,
+        zIndex: '0'
+      }
     })
   }
 
@@ -116,21 +127,40 @@ class ImgFigure extends Component {
     return Math.ceil(Math.random() * (high - low) + low)
   }
 
+  selectHandle(key) {
+    const { activeIndex, getActiveIndex, stageW, stageH } = this.props;
+    const { dataList } = this.state;
+    console.log(key, activeIndex)
+    if (key === activeIndex) {
+      this.setState({
+        isBack: !this.state.isBack
+      })
+    } else {
+      getActiveIndex(key)
+      this.resetItemList(dataList, key, stageW, stageH)
+    }
+  }
+  isCenter(key) {
+    const { activeIndex } = this.props
+    let { isBack } = this.state;
+    if (key === activeIndex && isBack) {
+      return true
+    }
+    return false
+  }
+
   render() {
     let {imgFigureClassName, dataList} = this.state;
-    if (dataList.length ===0 || !dataList[0].style.left || !dataList[0].style.top) {
-      return (
-        <section className="img-sec">
-          <figure className={imgFigureClassName} ref='imgFigure0' />
-        </section>
-      )
+    if (dataList.length ===0 ) {
+      return  null
     }
     return (
       <section className="img-sec">
         {
           dataList.map((item, key) => {
+            console.log(item)
             return (
-              <figure className={imgFigureClassName} key={key} ref={`imgFigure${key}`} style={item.style}>
+              <figure className={imgFigureClassName + (this.isCenter(item.id) ? ' is-inverse' : '')} key={key} ref={`imgFigure${key}`} style={item.style} onClick={this.selectHandle.bind(this, item.id)}>
                 <img src={item.imageUrl}
                      alt={item.title}
                 />
