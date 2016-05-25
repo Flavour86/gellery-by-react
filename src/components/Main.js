@@ -23,9 +23,7 @@ class AppComponent extends React.Component {
     if (!data) return
     data.map((item, key) => {
       item.imageUrl = path + item.fileName
-      item.id = key
     })
-    console.log(data)
      this.setState({
        dataList: data
      })
@@ -48,7 +46,6 @@ class AppComponent extends React.Component {
 
   render() {
     const { dataList, stageW, stageH, activeIndex } = this.state
-    console.log(activeIndex)
     if (stageW ===0 || stageH===0) {
       return (
         <div className="content">

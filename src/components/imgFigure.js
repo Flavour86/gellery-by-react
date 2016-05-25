@@ -7,7 +7,8 @@ class ImgFigure extends Component {
     this.state = {
       imgFigureClassName: 'img-figure',
       dataList: [],
-      isBack: false
+      isBack: false,
+      posList: []
     }
     this.PropTypes = {
       dataList:PropTypes.array.isRequired,
@@ -26,7 +27,7 @@ class ImgFigure extends Component {
 
   componentDidMount() {
     const { stageW, stageH, activeIndex } = this.props
-    const {dataList} = this.state
+    const {dataList, posList} = this.state
     this.resetItemList(dataList, activeIndex, stageW, stageH)
   }
 
@@ -54,7 +55,7 @@ class ImgFigure extends Component {
         max: stageH - imgHeight
       }
     }
-    const centerInterval = {
+    const centerTopInterval = {
       x: {
         min: stageW/2 - imgWidth,
         max: stageW/2 + imgWidth/2
@@ -64,24 +65,25 @@ class ImgFigure extends Component {
         max: stageH/2 - imgHeight
       }
     }
-    console.log(active)
-    let centerPos = this.getCenterPos(data, active);
-    let topPos = this.getRangeArrNum(data,2);
-    let leftPos = this.getRangeArrNum(data, Math.ceil(data.length / 2));
-    let rightPos = data;
-    this.getItemPosi(topPos, centerInterval)
-    this.getItemPosi(leftPos, leftInterval)
-    this.getItemPosi(rightPos, rightInterval)
-    if (centerPos.length !==0) {
-      centerPos[0].style = {
-        left: stageW/2 - imgWidth/2 + 'px',
-        top: stageH/2 + 'px',
-        zIndex: '10'
-      }
+    let tempArr = [];
+    const len = data.length;
+    const Num = {
+      topNum:2,
+      leftNum: Math.ceil((len - 3) / 2),
+      rightNum: Math.floor((len - 3) / 2)
     }
-    const newData = [...centerPos,...topPos,...leftPos,...rightPos]
+    let centerPos = {
+      left: stageW/2 - imgWidth/2 + 'px',
+      top: stageH/2 + 'px',
+      zIndex: '10'
+    }
+    let topPos = this.getItemPosi(Num.topNum,centerTopInterval);
+    let leftPos = this.getItemPosi(Num.leftNum,leftInterval);
+    let rightPos = this.getItemPosi(Num.rightNum,rightInterval);
+    tempArr = [...topPos,...leftPos,...rightPos]
+    tempArr = this.mergeArr(tempArr, active, centerPos, len);
     this.setState({
-      dataList: newData
+      posList: tempArr
     })
   }
 
@@ -101,26 +103,36 @@ class ImgFigure extends Component {
     return (Math.random() > 0.5 ? '-' : '') + Math.ceil(Math.random()*30)
   }
 
-  getItemPosi(data, pos) {
-    if (!data.length || !pos) return;
-    data.map(item => {
+  getItemPosi(num, pos) {
+    if (num === 0 || !pos) return [];
+    const res = []
+    for (let i=0;i<num;i++) {
       const rotate = this.getRangeRotate()
-      item.style = {
+      const temp = {
         left: this.getRangeNum(pos.x.min, pos.x.max) + 'px',
         top: this.getRangeNum(pos.y.min, pos.y.max) + 'px',
         transform: `rotate(${rotate}deg)`,
         zIndex: '0'
       }
-    })
+      res.push(temp)
+    }
+    return res
   }
 
-  getRangeArrNum(arr, num) {
-    let temp = [];
-    for(let i=0;i<num;i++) {
-      let index = this.getRangeNum(0, arr.length-1);
-      temp = temp.concat(arr.splice(index, 1))
+  mergeArr(arr, active, activeValue, lenth) {
+    if (arr.length >= lenth ) return
+    if (active < arr.length) {
+      const temp = arr[active]
+      for(let i=0;i<arr.length;i++) {
+        if (i === active) {
+          arr[active] = activeValue
+        }
+      }
+      arr.push(temp)
+    } else {
+      arr.push(activeValue)
     }
-    return temp
+    return arr
   }
 
   getRangeNum(low, high) {
@@ -136,6 +148,9 @@ class ImgFigure extends Component {
         isBack: !this.state.isBack
       })
     } else {
+      this.setState({
+        isBack: false
+      })
       getActiveIndex(key)
       this.resetItemList(dataList, key, stageW, stageH)
     }
@@ -150,17 +165,13 @@ class ImgFigure extends Component {
   }
 
   render() {
-    let {imgFigureClassName, dataList} = this.state;
-    if (dataList.length ===0 ) {
-      return  null
-    }
+    let {imgFigureClassName, dataList, posList} = this.state;
     return (
       <section className="img-sec">
         {
           dataList.map((item, key) => {
-            console.log(item)
             return (
-              <figure className={imgFigureClassName + (this.isCenter(item.id) ? ' is-inverse' : '')} key={key} ref={`imgFigure${key}`} style={item.style} onClick={this.selectHandle.bind(this, item.id)}>
+              <figure className={imgFigureClassName + (this.isCenter(key) ? ' is-inverse' : '')} key={key} ref={`imgFigure${key}`} style={posList[key]} onClick={this.selectHandle.bind(this, key)}>
                 <img src={item.imageUrl}
                      alt={item.title}
                 />
