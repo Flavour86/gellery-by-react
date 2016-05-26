@@ -1,6 +1,7 @@
 import React from 'react';
 import ImgFigure from './imgFigure'
-import imageDatas from '../data/imageDatas.js';
+import imageDatas from '../data/imageDatas.js'
+import Dots from './dots'
 import '../styles/App.css'
 
 class AppComponent extends React.Component {
@@ -64,6 +65,10 @@ class AppComponent extends React.Component {
             dataList={dataList}
             activeIndex={activeIndex}
             getActiveIndex={this.getActiveIndex.bind(this)}
+          />
+          <Dots
+            dataList={dataList}
+            activeIndex={activeIndex}
           />
         </section>
       </div>

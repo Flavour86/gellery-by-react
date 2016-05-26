@@ -12,7 +12,8 @@ function getDefaultModules() {
     loaders: [
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader!postcss-loader'
+        exclude: /node_modules/,
+        loader: 'style!css!postcss-loader'
       },
       {
         test: /\.sass/,
