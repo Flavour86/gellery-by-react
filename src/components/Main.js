@@ -20,6 +20,15 @@ class AppComponent extends React.Component {
     this.getItemImgUrl(this.path, imageDatas)
   }
 
+  componentDidMount() {
+    const stageW = this.refs.stage.scrollWidth;
+    const stageH = this.refs.stage.scrollHeight;
+    this.setState({
+      stageW: stageW,
+      stageH: stageH
+    })
+  }
+
   getItemImgUrl(path, data) {
     if (!data) return
     data.map((item, key) => {
@@ -36,15 +45,18 @@ class AppComponent extends React.Component {
     })
   }
 
-  componentDidMount() {
-    const stageW = this.refs.stage.scrollWidth;
-    const stageH = this.refs.stage.scrollHeight;
-    this.setState({
-      stageW: stageW,
-      stageH: stageH
-    })
+  resetActive(index) {
+    this.getActiveIndex(index);
+    this.refs.ImgFigure.resetItemList(index)
   }
 
+  imgFigureIsBack() {
+    this.refs.ImgFigure.isBack()
+  }
+
+  dotsBack() {
+    this.refs.dots.isBack()
+  }
   render() {
     const { dataList, stageW, stageH, activeIndex } = this.state
     if (stageW ===0 || stageH===0) {
@@ -60,16 +72,20 @@ class AppComponent extends React.Component {
       <div className="content">
         <section className="stage" ref="stage">
           <ImgFigure
+            ref="ImgFigure"
             stageW={stageW}
             stageH={stageH}
             dataList={dataList}
             activeIndex={activeIndex}
             getActiveIndex={this.getActiveIndex.bind(this)}
+            setDotsBack={this.dotsBack.bind(this)}
           />
           <Dots
+            ref="dots"
             dataList={dataList}
             activeIndex={activeIndex}
-            getActiveIndex={this.getActiveIndex.bind(this)}
+            resetActive={this.resetActive.bind(this)}
+            setImgFigureBack={this.imgFigureIsBack.bind(this)}
           />
         </section>
       </div>

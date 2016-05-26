@@ -26,19 +26,14 @@ class ImgFigure extends Component {
   }
 
   componentDidMount() {
-    const { stageW, stageH, activeIndex } = this.props
-    const {dataList} = this.state
-    this.resetItemList(dataList, activeIndex, stageW, stageH)
+    const {activeIndex } = this.props
+    this.resetItemList(activeIndex)
   }
 
-  componentWillReceiveProps() {
-    const { stageW, stageH, activeIndex } = this.props
+  resetItemList(active) {
+    const { stageW, stageH } = this.props
     const {dataList} = this.state
-    this.resetItemList(dataList, activeIndex, stageW, stageH)
-  }
-
-  resetItemList(data, active, stageW, stageH) {
-    if (!data) return
+    if (!dataList) return
     const imgWidth = this.refs.imgFigure0.scrollWidth,
           imgHeight = this.refs.imgFigure0.scrollHeight;
     const leftInterval = {
@@ -72,7 +67,7 @@ class ImgFigure extends Component {
       }
     }
     let tempArr;
-    const len = data.length;
+    const len = dataList.length;
     const Num = {
       topNum:2,
       leftNum: Math.ceil((len - 3) / 2),
@@ -150,20 +145,23 @@ class ImgFigure extends Component {
     return Math.ceil(Math.random() * (high - low) + low)
   }
 
+  isBack() {
+    this.setState({
+      isBack: !this.state.isBack
+    })
+  }
+
   selectHandle(key) {
-    const { activeIndex, getActiveIndex, stageW, stageH } = this.props;
-    const { dataList } = this.state;
-    console.log(key, activeIndex)
+    const { activeIndex, getActiveIndex, setDotsBack} = this.props;
     if (key === activeIndex) {
-      this.setState({
-        isBack: !this.state.isBack
-      })
+      this.isBack()
+      setDotsBack()
     } else {
       this.setState({
         isBack: false
       })
       getActiveIndex(key)
-      this.resetItemList(dataList, key, stageW, stageH)
+      this.resetItemList(key)
     }
   }
   isCenter(key) {

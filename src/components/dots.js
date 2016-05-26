@@ -6,7 +6,8 @@ class Dots extends Component {
     super()
     this.state = {
       controllerClassName: 'controller-unit',
-      isCenter: false
+      isCenter: false,
+      isInverse: false
     }
     this.PropTypes = {
       dataList: PropTypes.array.isRequired,
@@ -22,6 +23,21 @@ class Dots extends Component {
     return false
   }
 
+  isInverse(key) {
+    const { activeIndex } = this.props
+    const { isInverse } = this.state
+    if (key === activeIndex && isInverse) {
+      return true
+    }
+    return false
+  }
+
+  isBack() {
+    this.setState({
+      isInverse: !this.state.isInverse
+    })
+  }
+
   render() {
     const { dataList } = this.props
     const { controllerClassName } = this.state
@@ -29,7 +45,7 @@ class Dots extends Component {
       <nav className="controller-nav">
         {
           dataList.map((item, key) => {
-            return <span className={controllerClassName + (this.isCenter(key) ? ' is-center' : '')} key={key} onClick={this._handleClick.bind(this, key)} />
+            return <span className={controllerClassName + (this.isCenter(key) ? ' is-center' : '') + (this.isInverse(key) ? ' is-inverse' : '')} key={key} onClick={this._handleClick.bind(this, key)} />
           })
         }
       </nav>
@@ -37,8 +53,16 @@ class Dots extends Component {
   }
 
   _handleClick(key) {
-    const { getActiveIndex } = this.props
-    getActiveIndex(key)
+    const { resetActive, activeIndex, setImgFigureBack } = this.props
+    if (activeIndex === key) {
+      this.isBack()
+      setImgFigureBack()
+    } else {
+      this.setState({
+        isInverse: false
+      })
+      resetActive(key)
+    }
   }
 }
 
