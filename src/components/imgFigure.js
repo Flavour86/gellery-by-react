@@ -65,7 +65,7 @@ class ImgFigure extends Component {
         max: stageH/2 - imgHeight
       }
     }
-    let tempArr = [];
+    let tempArr;
     const len = data.length;
     const Num = {
       topNum:2,
@@ -75,29 +75,33 @@ class ImgFigure extends Component {
     let centerPos = {
       left: stageW/2 - imgWidth/2 + 'px',
       top: stageH/2 + 'px',
-      zIndex: '10'
+      zIndex: '10',
+      id: active
     }
     let topPos = this.getItemPosi(Num.topNum,centerTopInterval);
     let leftPos = this.getItemPosi(Num.leftNum,leftInterval);
     let rightPos = this.getItemPosi(Num.rightNum,rightInterval);
-    tempArr = [...topPos,...leftPos,...rightPos]
+    tempArr = this.rangeSortArr([...topPos,...leftPos,...rightPos])
     tempArr = this.mergeArr(tempArr, active, centerPos, len);
     this.setState({
       posList: tempArr
     })
   }
 
-  getCenterPos(data, current) {
-    if (!data) return
-    const temp = []
-    for(let i = 0;i<data.length;i++){
-      if (data[i].id === current) {
-        temp.push(data[i])
-        data.splice(i,1)
+  rangeSortArr(arr) {
+    if (arr.length === 0) return
+    arr.map((item, key) => {
+      item.id = key
+    })
+    var temp = arr.sort((a,b) => {
+      if (Math.random() > 0.5) {
+        return a.id - b.id
       }
-    }
+      return b.id - a.id
+    })
     return temp
   }
+
 
   getRangeRotate() {
     return (Math.random() > 0.5 ? '-' : '') + Math.ceil(Math.random()*30)
@@ -123,6 +127,7 @@ class ImgFigure extends Component {
     if (arr.length >= lenth ) return
     if (active < arr.length) {
       const temp = arr[active]
+      temp.id = lenth - 1
       for(let i=0;i<arr.length;i++) {
         if (i === active) {
           arr[active] = activeValue
