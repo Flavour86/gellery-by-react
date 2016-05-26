@@ -27,7 +27,13 @@ class ImgFigure extends Component {
 
   componentDidMount() {
     const { stageW, stageH, activeIndex } = this.props
-    const {dataList, posList} = this.state
+    const {dataList} = this.state
+    this.resetItemList(dataList, activeIndex, stageW, stageH)
+  }
+
+  componentWillReceiveProps() {
+    const { stageW, stageH, activeIndex } = this.props
+    const {dataList} = this.state
     this.resetItemList(dataList, activeIndex, stageW, stageH)
   }
 

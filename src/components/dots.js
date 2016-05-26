@@ -10,7 +10,8 @@ class Dots extends Component {
     }
     this.PropTypes = {
       dataList: PropTypes.array.isRequired,
-      activeIndex: PropTypes.number.isRequired
+      activeIndex: PropTypes.number.isRequired,
+      getActiveIndex: PropTypes.func.isRequired
     }
   }
   isCenter(key) {
@@ -28,11 +29,16 @@ class Dots extends Component {
       <nav className="controller-nav">
         {
           dataList.map((item, key) => {
-            return <span className={controllerClassName + (this.isCenter(key) ? ' is-center' : '')} key={key} />
+            return <span className={controllerClassName + (this.isCenter(key) ? ' is-center' : '')} key={key} onClick={this._handleClick.bind(this, key)} />
           })
         }
       </nav>
     )
+  }
+
+  _handleClick(key) {
+    const { getActiveIndex } = this.props
+    getActiveIndex(key)
   }
 }
 

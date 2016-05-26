@@ -69,6 +69,7 @@ class AppComponent extends React.Component {
           <Dots
             dataList={dataList}
             activeIndex={activeIndex}
+            getActiveIndex={this.getActiveIndex.bind(this)}
           />
         </section>
       </div>
