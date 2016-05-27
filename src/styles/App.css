@@ -121,10 +121,10 @@ p {
 
 .is-center:after{
   color: #fff;
-  font-family: "icons-turn-arrow"!important;
+  /*font-family: "icons-turn-arrow"!important;*/
   font-size: 80%;
   line-height: 30px;
-  content: "\e600";
+  /*content: "\e600";*/
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

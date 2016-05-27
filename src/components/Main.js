@@ -1,4 +1,5 @@
-import React from 'react';
+import React from 'react'
+import ReactDOM from 'react-dom'
 import ImgFigure from './imgFigure'
 import imageDatas from '../data/imageDatas.js'
 import Dots from './dots'
@@ -14,6 +15,7 @@ class AppComponent extends React.Component {
       stageW: 0,
       stageH: 0
     }
+    this.mouseScrolling = false
   }
 
   componentWillMount() {
@@ -21,6 +23,12 @@ class AppComponent extends React.Component {
   }
 
   componentDidMount() {
+    this.getStageWidth()
+    this.domResize()
+    this._mouseScroll()
+  }
+
+  getStageWidth() {
     const stageW = this.refs.stage.scrollWidth;
     const stageH = this.refs.stage.scrollHeight;
     this.setState({
@@ -57,6 +65,7 @@ class AppComponent extends React.Component {
   dotsBack() {
     this.refs.dots.isBack()
   }
+
   render() {
     const { dataList, stageW, stageH, activeIndex } = this.state
     if (stageW ===0 || stageH===0) {
@@ -90,6 +99,62 @@ class AppComponent extends React.Component {
         </section>
       </div>
     )
+  }
+
+  domResize() {
+    const {activeIndex } = this.state
+    const self = this
+    window.addEventListener('resize', () => {
+      this.getStageWidth()
+      self.refs.ImgFigure.resetItemList(activeIndex)
+    }, false)
+  }
+
+  getDeleyTime(styleName, element) {
+    if (!styleName || !element) return
+    let tmp = ''
+    if (window.getComputedStyle) {
+      tmp = window.getComputedStyle(element, null)[styleName]
+    }
+    if(tmp.trim().length) {
+      tmp = tmp.match(/\d+(\.\d+)?/g)[0] * 1000
+    }
+    return tmp
+  }
+
+  _mouseScroll() {
+    let {activeIndex, dataList } = this.state
+    const len = dataList.length
+    const userAgent = window.navigator.userAgent;
+    const type = userAgent.indexOf('Firefox') > -1 ? 'DOMMouseScroll' : 'mousewheel'
+    document.addEventListener(type, (event) => {
+      if (this.mouseScrolling) return
+      this.mouseScrolling = true
+      if (event.detail) {
+        if (event.detail > 0) {
+          activeIndex++
+        } else {
+          activeIndex--
+        }
+      } else {
+        if (event.deltaY > 0) {
+          activeIndex++
+        } else {
+          activeIndex--
+        }
+      }
+      activeIndex = (activeIndex > len -1) ? 0 : ((activeIndex < 0) ? len -1 : activeIndex)
+      this.refs.ImgFigure.resetItemList(activeIndex)
+      this.setState({
+        activeIndex: activeIndex
+      })
+      var itemElement = this.refs.ImgFigure.refs.imgFigure0
+      const duration = this.getDeleyTime('transition-duration', itemElement)
+      const delay = this.getDeleyTime('transition-delay', itemElement)
+      setTimeout(() => {
+        this.mouseScrolling = false
+      },(duration + delay))
+    }, false)
   }
 }
 
