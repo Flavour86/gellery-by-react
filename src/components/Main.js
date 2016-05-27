@@ -23,8 +23,9 @@ class AppComponent extends React.Component {
   }
 
   componentDidMount() {
+    const { activeIndex } = this.state
     this.getStageWidth()
-    this.domResize()
+    this._domResize(activeIndex)
     this._mouseScroll()
   }
 
@@ -51,6 +52,7 @@ class AppComponent extends React.Component {
     this.setState({
       activeIndex: index
     })
+    this._domResize(index)
   }
 
   resetActive(index) {
@@ -101,12 +103,10 @@ class AppComponent extends React.Component {
     )
   }
 
-  domResize() {
-    const {activeIndex } = this.state
-    const self = this
+  _domResize(activeIndex) {
     window.addEventListener('resize', () => {
       this.getStageWidth()
-      self.refs.ImgFigure.resetItemList(activeIndex)
+      this.refs.ImgFigure.resetItemList(activeIndex)
     }, false)
   }
 
