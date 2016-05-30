@@ -13,7 +13,7 @@ function getDefaultModules() {
       {
         test: /\.css$/,
         exclude: /node_modules/,
-        loader: 'style!css!postcss-loader'
+        loader: 'style-loader!css-loader!postcss-loader'
       },
       {
         test: /\.sass/,
@@ -32,7 +32,7 @@ function getDefaultModules() {
         loader: 'style-loader!css-loader!postcss-loader!stylus-loader'
       },
       {
-        test: /\.(png|jpg|gif|woff|woff2)$/,
+        test: /\.(png|jpg|gif|woff|woff2|eot|ttf)$/,
         loader: 'url-loader?limit=8192'
       },
       {
@@ -48,6 +48,9 @@ module.exports = {
   port: dfltPort,
   getDefaultModules: getDefaultModules,
   postcss: function () {
-    return [];
+    return [
+      require('precss'),
+      require('autoprefixer')
+    ];
   }
 };
