@@ -41,7 +41,7 @@ class AppComponent extends React.Component {
   getItemImgUrl(path, data) {
     if (!data) return
     data.map((item, key) => {
-      item.imageUrl = path + item.fileName
+      item.imageUrl = require(`../images/${item.fileName}`)
     })
      this.setState({
        dataList: data
