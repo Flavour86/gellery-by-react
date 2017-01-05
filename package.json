@@ -68,7 +68,10 @@
   },
   "dependencies": {
     "core-js": "^2.0.0",
+    "cssnano": "^3.7.4",
     "normalize.css": "^4.0.0",
+    "postcss-each": "^0.9.3",
+    "postcss-easy-import": "^1.0.1",
     "react": "^15.0.0",
     "react-dom": "^15.0.0"
   }

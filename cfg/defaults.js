@@ -49,8 +49,21 @@ module.exports = {
   getDefaultModules: getDefaultModules,
   postcss: function () {
     return [
-      require('precss'),
-      require('autoprefixer')
+      require('postcss-each'),
+      require('precss')(),
+      require('cssnano')({
+        filterPlugins: false,
+        sourcemap: true,
+        autoprefixer: {
+          add: true,
+          remove: true,
+          browsers: ['last 2 versions']
+        },
+        safe: true,
+        discardComments: {
+          removeAll: true
+        }
+      })
     ];
   }
 };
